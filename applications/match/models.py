@@ -19,8 +19,8 @@ MATCH_RESULTS = [
 class Match(models.Model):
     local_team = models.ForeignKey(Team, on_delete=models.CASCADE,related_name='matches_as_local')
     away_team = models.ForeignKey(Team, on_delete=models.CASCADE,related_name='matches_as_visitor')
-    local_team_score = models.IntegerField(null=True,blank=True)
-    away_team_score = models.IntegerField(null=True,blank=True)
+    local_team_score = models.IntegerField(null=True,blank=True,default=0)
+    away_team_score = models.IntegerField(null=True,blank=True,default=0)
     date = models.DateTimeField()
     status = models.CharField(choices=MATCH_STATUS,default='PROGRAMADO',max_length=30)
     referee = models.CharField(max_length=200,null=True,blank=True)

@@ -28,4 +28,5 @@ urlpatterns = [
     path('api/v1/teams/',include('applications.team.urls'),name='teams'),
     path('api/v1/players/',include('applications.player.urls'),name='players'),
     path('api/v1/matchs/',include('applications.match.urls'),name='match'),
+    path('api/v1/bets/', include('applications.apuestaUsuario.urls'), name='apuestas'),
 ]

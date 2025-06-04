@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'applications.player',
     'applications.team',
     'applications.match',
+    'applications.apuestaUsuario'
 ]
 
 MIDDLEWARE = [
