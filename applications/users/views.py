@@ -28,6 +28,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False,methods=['post'])
     def createUser(self, request):
         email = request.data.get('email')
+        password = request.data.get('password')
         if not email:
             return JsonResponse({'message': 'No email provided.'}, status=400)
 
@@ -42,7 +43,7 @@ class UserViewSet(viewsets.ModelViewSet):
             # Crear el usuario
             user = serializer.save()
 
-            user.set_password(serializer.data['password'])
+            user.set_password(password)
 
             user.save()
 
@@ -84,7 +85,7 @@ class UserViewSet(viewsets.ModelViewSet):
         cod_verificacion = randint(100000, 999999)
         cache.set('code', cod_verificacion)
         try:
-            send_basic_email("Código de verificación", f'El código es {cod_verificacion}','manuel.liebana.2001@fernando3martos.com')
+            send_basic_email("Código de verificación", f'El código es {cod_verificacion}',email)
             return JsonResponse({'message': 'Code resent successfully'}, status=200)
         except BadHeaderError:
             return JsonResponse({'message': 'Invalid header found.'}, status=400)
@@ -121,7 +122,7 @@ class UserViewSet(viewsets.ModelViewSet):
                 cache.set('code',cod_verificacion)
                 try:
                     send_basic_email("Código de verificación", f'El código es {cod_verificacion}',
-                                     'manuel.liebana.2001@fernando3martos.com')
+                                     email)
                 except BadHeaderError:
                     return JsonResponse({'message': 'Invalid header found.'}, status=400)
 
@@ -133,6 +134,7 @@ class UserViewSet(viewsets.ModelViewSet):
                     return JsonResponse(
                         {'message': 'User login successfully',
                          'user': {
+                             'id': user.id,
                              'email': user.email,
                              'username': user.username,
                              'first_name': user.first_name,
@@ -142,6 +144,7 @@ class UserViewSet(viewsets.ModelViewSet):
                              'experience': user.experience,
                              'school_id': user.school_id.id,
                              'course': user.course,
+                             'is_superuser': user.is_superuser,
                          },
                          },
                         status=200)
@@ -164,4 +167,3 @@ class UserViewSet(viewsets.ModelViewSet):
                 })
         else:
             return JsonResponse({'schoo_id': 'falta'})
-
