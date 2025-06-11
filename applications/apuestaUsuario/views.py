@@ -16,8 +16,19 @@ class ApuestaUsuarioViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], url_path='create',permission_classes=[AllowAny])
     def create_apuesta(self, request):
         serializer = ApuestaUsuarioSerializer(data=request.data)
+
         if serializer.is_valid():
+            user_id = serializer.validated_data['user'].id
+            amount = serializer.validated_data['amount']
+            match_id = serializer.validated_data['conditions'][0]['match'].id
+
+            if ApuestaUsuario.objects.filter(user=user_id,conditions__match_id=match_id).exists():
+                return JsonResponse({'message': 'Predicción existente'}, status=status.HTTP_400_BAD_REQUEST)
+
             serializer.save()
+            user = User.objects.get(id=user_id)
+            user.experience -= amount
+            user.save()
             return JsonResponse({
                 "status": status.HTTP_201_CREATED,
                 "message": "Apuesta creada correctamente",
